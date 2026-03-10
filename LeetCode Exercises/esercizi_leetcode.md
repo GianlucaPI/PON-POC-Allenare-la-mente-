@@ -1,4 +1,4 @@
-# 🏋️ LeetCode Exercises — Allenare la Mente
+# LeetCode Exercises - Allenare la Mente
 
 Raccolta di 10 esercizi ispirati a LeetCode che coprono i tre argomenti del corso:
 - **Complessità computazionale** (array, hash map, analisi di complessità)
@@ -61,7 +61,7 @@ Output: [0, 1]
 ### Soluzione
 
 ```python
-# ❌ Approccio 1: Brute Force — O(n²)
+#  Approccio 1: Brute Force - O(n²)
 # Per ogni coppia di elementi, controlla se la somma è uguale al target.
 # Funziona, ma è troppo lento per input grandi.
 
@@ -73,7 +73,7 @@ def twoSum_brute(nums, target):
     return []
 
 
-# ✅ Approccio 2: HashMap — O(n)
+#  Approccio 2: HashMap - O(n)
 # Idea chiave: se cerco due numeri a + b = target, allora b = target - a.
 # Per ogni numero, controllo se il suo "complemento" è già stato visto.
 
@@ -131,7 +131,7 @@ Output: k = 5, nums = [0, 1, 2, 3, 4, _, _, _, _, _]
 ### Soluzione
 
 ```python
-# ✅ Two Pointers — O(n) tempo, O(1) spazio
+#  Two Pointers - O(n) tempo, O(1) spazio
 # Usiamo due puntatori:
 #   - `slow` segna la posizione dove scrivere il prossimo valore unico
 #   - `fast` scorre l'intero array alla ricerca di nuovi valori
@@ -335,7 +335,7 @@ def removeElements(head, val):
 ---
 ---
 
-## Esercizio 5 — Next Greater Element I *(LeetCode #496)*
+## Esercizio 5 - Next Greater Element I *(LeetCode #496)*
 
 **Difficoltà:** 🟢 Easy  
 **Argomento:** Stack (Monotonic Stack), HashMap  
@@ -415,7 +415,7 @@ def nextGreaterElement(nums1, nums2):
 ---
 ---
 
-## Esercizio 6 — Backspace String Compare *(LeetCode #844)*
+## Esercizio 6 - Backspace String Compare *(LeetCode #844)*
 
 **Difficoltà:** 🟢 Easy  
 **Argomento:** Stack  
@@ -496,7 +496,7 @@ def backspaceCompare(s, t):
 ---
 ---
 
-## Esercizio 7 — Time Needed to Buy Tickets *(LeetCode #2073)*
+## Esercizio 7 - Time Needed to Buy Tickets *(LeetCode #2073)*
 
 **Difficoltà:** 🟢 Easy  
 **Argomento:** Queue (simulazione)  
@@ -535,7 +535,7 @@ Output: 8
 ### Soluzione
 
 ```python
-# ❌ Approccio 1: Simulazione completa con coda — O(sum(tickets))
+#  Approccio 1: Simulazione completa con coda — O(sum(tickets))
 # Simula esattamente il processo descritto nella traccia.
 
 from collections import deque
@@ -558,7 +558,7 @@ def timeRequiredToBuy_simulation(tickets, k):
     return time
 
 
-# ✅ Approccio 2: Soluzione matematica — O(n)
+#  Approccio 2: Soluzione matematica — O(n)
 # Osservazione: non serve simulare! Per ogni persona, calcola quanti turni fa.
 
 def timeRequiredToBuy(tickets, k):
@@ -724,7 +724,7 @@ Output:                [ 1,  1,  0]
 ### Soluzione
 
 ```python
-# ❌ Approccio Brute Force — O(n²)
+#  Approccio Brute Force — O(n²)
 # Per ogni giorno, scorri tutti i giorni successivi fino a trovarne uno più caldo.
 
 def dailyTemperatures_brute(temperatures):
@@ -738,7 +738,7 @@ def dailyTemperatures_brute(temperatures):
     return answer
 
 
-# ✅ Monotonic Stack — O(n)
+#  Monotonic Stack — O(n)
 # Idea: manteniamo uno stack di INDICI dei giorni per cui non abbiamo
 # ancora trovato un giorno più caldo.
 
@@ -854,7 +854,7 @@ def mergeTwoLists(l1, l2):
     return dummy.next
 
 
-# ❌ Approccio 1: Merge una alla volta — O(k × N)
+#  Approccio 1: Merge una alla volta - O(k × N)
 # Unisci la prima con la seconda, poi il risultato con la terza, ecc.
 # Dove N = numero totale di nodi.
 
@@ -869,7 +869,7 @@ def mergeKLists_sequential(lists):
 # Problema: le prime liste vengono ri-percorse molte volte → O(k × N)
 
 
-# ✅ Approccio 2: Divide and Conquer — O(N × log k)
+#  Approccio 2: Divide and Conquer - O(N × log k)
 # Invece di unire sequenzialmente, uniamo a coppie come in un torneo.
 # Ad ogni "round", il numero di liste si dimezza.
 
@@ -928,7 +928,7 @@ def mergeKLists(lists):
 ---
 ---
 
-## 📌 Riepilogo delle tecniche
+##  Riepilogo delle tecniche
 
 | Tecnica | Esercizi |
 |---------|----------|
