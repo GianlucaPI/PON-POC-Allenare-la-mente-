@@ -130,33 +130,173 @@ Output: k = 5, nums = [0, 1, 2, 3, 4, _, _, _, _, _]
 
 ### Soluzione
 
+#### Idea intuitiva
+
+Immagina di avere una fila di carte ordinate sul tavolo, alcune ripetute:
+
+```
+[0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+```
+
+Vuoi tenere solo **una copia** di ogni carta, **senza usare un secondo tavolo** (in-place).
+
+La strategia è usare **due dita** (puntatori):
+- Il **dito lento** (`slow`) segna dove mettere la prossima carta unica.
+- Il **dito veloce** (`fast`) scorre tutte le carte una per una.
+
+Ogni volta che `fast` trova una carta **diversa** da quella sotto `slow`, la copia nella posizione successiva a `slow`.
+
+#### Perché funziona solo su array ordinati?
+
+Poiché l'array è **ordinato**, i duplicati sono sempre **adiacenti**. Questo significa che:
+- Non dobbiamo cercare duplicati "sparsi" in tutto l'array
+- Basta confrontare il valore corrente (`fast`) con l'ultimo unico trovato (`slow`)
+
+Se l'array **non** fosse ordinato (es. `[3, 1, 3, 2, 1]`), questa tecnica **non funzionerebbe** — servirebbe un approccio diverso (es. un `set`).
+
 ```python
 #  Two Pointers - O(n) tempo, O(1) spazio
 # Usiamo due puntatori:
-#   - `slow` segna la posizione dove scrivere il prossimo valore unico
+#   - `slow` segna la posizione dell'ultimo valore unico inserito
 #   - `fast` scorre l'intero array alla ricerca di nuovi valori
 
 def removeDuplicates(nums):
+    # Caso limite: array vuoto, nessun elemento unico
     if len(nums) == 0:
         return 0
 
-    slow = 0  # punta all'ultimo elemento unico inserito
+    # `slow` parte da 0: il primo elemento è sempre unico (non ha predecessori)
+    slow = 0
 
+    # `fast` parte da 1: confrontiamo ogni elemento con l'ultimo unico trovato
     for fast in range(1, len(nums)):
+
+        # Il cuore dell'algoritmo: confronto tra fast e slow
         if nums[fast] != nums[slow]:
-            # Trovato un nuovo valore unico!
+            # nums[fast] è un NUOVO valore, diverso dall'ultimo unico!
+            # 1. Avanziamo slow di una posizione (facciamo spazio)
             slow += 1
+            # 2. Copiamo il nuovo valore nella posizione di slow
             nums[slow] = nums[fast]
+            # Ora nums[slow] contiene il nuovo valore unico
 
-    return slow + 1  # numero di elementi unici
+        # Se nums[fast] == nums[slow], è un duplicato → non facciamo nulla.
+        # `fast` avanza automaticamente col for, `slow` resta fermo.
 
+    # `slow` è l'indice dell'ultimo elemento unico (0-indexed)
+    # Il numero totale di elementi unici è slow + 1
+    return slow + 1
+```
 
-# Esempio di esecuzione con nums = [0, 0, 1, 1, 2]:
-# fast=1: nums[1]=0 == nums[0]=0 → skip
-# fast=2: nums[2]=1 != nums[0]=0 → slow=1, nums[1]=1   → [0, 1, 1, 1, 2]
-# fast=3: nums[3]=1 == nums[1]=1 → skip
-# fast=4: nums[4]=2 != nums[1]=1 → slow=2, nums[2]=2   → [0, 1, 2, 1, 2]
-# Risultato: k=3, i primi 3 elementi sono [0, 1, 2] ✓
+#### Esempio 1 — passo passo: `nums = [1, 1, 2]`
+
+```
+Stato iniziale: nums = [1, 1, 2],  slow = 0
+
+fast=1: nums[1]=1  ==  nums[0]=1  →  è un duplicato, skip!
+        nums = [1, 1, 2],  slow = 0
+
+fast=2: nums[2]=2  !=  nums[0]=1  →  nuovo valore unico!
+        slow = 0+1 = 1
+        nums[1] = 2
+        nums = [1, 2, 2],  slow = 1
+
+Fine: return slow + 1 = 2
+Risultato: k = 2, i primi 2 elementi sono [1, 2] ✓
+```
+
+#### Esempio 2 — passo passo: `nums = [0, 0, 1, 1, 2]`
+
+```
+Stato iniziale: nums = [0, 0, 1, 1, 2],  slow = 0
+
+fast=1: nums[1]=0  ==  nums[0]=0  →  duplicato, skip
+        nums = [0, 0, 1, 1, 2],  slow = 0
+
+fast=2: nums[2]=1  !=  nums[0]=0  →  nuovo valore!
+        slow = 1, nums[1] = 1
+        nums = [0, 1, 1, 1, 2],  slow = 1
+
+fast=3: nums[3]=1  ==  nums[1]=1  →  duplicato, skip
+        nums = [0, 1, 1, 1, 2],  slow = 1
+
+fast=4: nums[4]=2  !=  nums[1]=1  →  nuovo valore!
+        slow = 2, nums[2] = 2
+        nums = [0, 1, 2, 1, 2],  slow = 2
+
+Fine: return slow + 1 = 3
+Risultato: k = 3, i primi 3 elementi sono [0, 1, 2] ✓
+```
+
+> **Nota:** gli elementi dopo la posizione `slow` (cioè `[1, 2]` nell'esempio sopra) non ci interessano — il problema chiede solo che i primi `k` siano corretti.
+
+#### Esempio 3 — caso senza duplicati: `nums = [1, 3, 5]`
+
+```
+Stato iniziale: nums = [1, 3, 5],  slow = 0
+
+fast=1: nums[1]=3  !=  nums[0]=1  →  nuovo valore!
+        slow = 1, nums[1] = 3 (era già 3, nessun cambiamento reale)
+        nums = [1, 3, 5],  slow = 1
+
+fast=2: nums[2]=5  !=  nums[1]=3  →  nuovo valore!
+        slow = 2, nums[2] = 5 (era già 5)
+        nums = [1, 3, 5],  slow = 2
+
+Fine: return slow + 1 = 3
+Risultato: k = 3, tutti gli elementi sono unici → l'array non cambia ✓
+```
+
+#### Esempio 4 — caso tutti uguali: `nums = [7, 7, 7, 7]`
+
+```
+Stato iniziale: nums = [7, 7, 7, 7],  slow = 0
+
+fast=1: nums[1]=7  ==  nums[0]=7  →  duplicato, skip
+fast=2: nums[2]=7  ==  nums[0]=7  →  duplicato, skip
+fast=3: nums[3]=7  ==  nums[0]=7  →  duplicato, skip
+
+Fine: return slow + 1 = 1
+Risultato: k = 1, l'unico elemento unico è [7] ✓
+```
+
+> In questo caso `slow` non si muove mai: resta a `0` per tutto il ciclo.
+
+#### Visualizzazione grafica del meccanismo
+
+```
+nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+        S                                  S = slow, F = fast
+           F
+
+→ 0 == 0 → skip                           slow non si muove
+
+        S
+              F
+→ 1 != 0 → slow avanza, copia!
+
+        ·  S
+              F
+nums = [0, 1, 1, 1, 1, 2, 2, 3, 3, 4]
+
+           S
+                 F
+→ 1 == 1 → skip
+
+           S
+                    F
+→ 1 == 1 → skip
+
+           S
+                       F
+→ 2 != 1 → slow avanza, copia!
+
+              S
+                       F
+nums = [0, 1, 2, 1, 1, 2, 2, 3, 3, 4]
+
+... e così via fino alla fine:
+nums = [0, 1, 2, 3, 4, _, _, _, _, _]   k = 5
 ```
 
 ### Commenti didattici
@@ -167,6 +307,20 @@ def removeDuplicates(nums):
 > - La complessità è **O(n)** perché scorriamo l'array una sola volta.
 > - Lo spazio è **O(1)**: non creiamo strutture dati aggiuntive, modifichiamo `nums` direttamente.
 > - L'assunzione che l'array sia **ordinato** è cruciale: i duplicati sono per forza adiacenti, quindi basta confrontare `nums[fast]` con `nums[slow]`.
+>
+> **Perché `return slow + 1` e non `return slow`?**
+> - `slow` è un **indice** (parte da 0), non un contatore.
+> - Se ci sono 3 elementi unici, `slow` alla fine vale 2 (indici 0, 1, 2).
+> - Quindi il **numero** di elementi è `slow + 1`.
+>
+> **Perché non usare un `set` per eliminare i duplicati?**
+> - Un `set` funzionerebbe (`list(set(nums))`), ma userebbe **O(n) spazio extra**.
+> - Il problema chiede esplicitamente una soluzione **in-place** con O(1) spazio.
+> - Inoltre il `set` non preserva l'ordine (in Python 3.7+ il `dict` sì, ma non è il punto).
+>
+> **Confronto con il brute force:**
+> - Un approccio ingenuo sarebbe rimuovere i duplicati con `nums.pop(i)`, ma ogni `pop` in mezzo all'array costa **O(n)** (deve spostare tutti gli elementi successivi). Nel caso peggiore: **O(n²)**.
+> - La soluzione con two pointers evita qualsiasi spostamento: sovrascrive direttamente nella posizione giusta.
 
 ---
 ---
