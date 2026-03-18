@@ -19,7 +19,7 @@ Chiave      Hash Function      Indice / Array T
 "Alice"  ──▶  h("Alice") ──▶  0: [       ]
 "Bob"    ──▶  h("Bob")   ──▶  1: [ "Bob" ]
 "Carl"   ──▶  h("Carl")  ──▶  2: [       ]
-                              3: ["Alice"]
+                               3: ["Alice"]
 ```
 
 ---
