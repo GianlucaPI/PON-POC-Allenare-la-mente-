@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 2 - Barra di Ricerca con Autocompletamento</title>
+</head>
+<body>
+
+    <h1>Barra di Ricerca</h1>
+
+    <!-- Campo di input dove l'utente scrive per cercare -->
+    <input type="text" id="inputRicerca" placeholder="Cerca un nome...">
+
+    <!-- Questo div conterrà i suggerimenti che appaiono mentre si scrive -->
+    <div id="suggerimenti"></div>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 2 - BARRA DI RICERCA CON AUTOCOMPLETAMENTO
+        // ============================================================
+
+        // Array di nomi tra cui cercare.
+        // Questi sono i dati da cui il sistema prenderà i suggerimenti.
+        // Puoi aggiungere o modificare i nomi come vuoi.
+        var nomi = [
+            "Alessandro",
+            "Andrea",
+            "Anna",
+            "Barbara",
+            "Carlo",
+            "Chiara",
+            "Davide",
+            "Elena",
+            "Fabio",
+            "Francesca",
+            "Giovanni",
+            "Giulia",
+            "Laura",
+            "Luca",
+            "Marco",
+            "Maria",
+            "Matteo",
+            "Paola",
+            "Roberto",
+            "Sara",
+            "Simone",
+            "Valentina"
+        ];
+
+        // Recuperiamo i riferimenti agli elementi HTML che ci servono.
+        var inputRicerca = document.getElementById("inputRicerca");
+        var divSuggerimenti = document.getElementById("suggerimenti");
+
+        // ============================================================
+        // FUNZIONE: cercaSuggerimenti
+        // Questa funzione viene chiamata ogni volta che l'utente scrive
+        // qualcosa nel campo di ricerca. Cerca nell'array dei nomi
+        // quelli che corrispondono al testo digitato e li mostra come
+        // suggerimenti sotto la barra di ricerca.
+        // ============================================================
+        function cercaSuggerimenti() {
+            // Recuperiamo il testo scritto dall'utente nel campo di ricerca.
+            // Usiamo toLowerCase() per convertire tutto in minuscolo,
+            // così la ricerca non distingue tra maiuscole e minuscole.
+            // Esempio: "ma" troverà sia "Marco" che "Maria".
+            var testo = inputRicerca.value.toLowerCase();
+
+            // Svuotiamo i suggerimenti precedenti.
+            // Ogni volta che l'utente digita una lettera, ricostruiamo la lista
+            // dei suggerimenti da zero.
+            divSuggerimenti.innerHTML = "";
+
+            // Se il campo di ricerca è vuoto, non mostriamo nessun suggerimento.
+            // Usciamo dalla funzione con return.
+            if (testo === "") {
+                return;
+            }
+
+            // Creiamo un array vuoto dove metteremo i nomi che corrispondono
+            // al testo digitato dall'utente.
+            var risultati = [];
+
+            // Cicliamo su tutti i nomi dell'array per trovare quelli
+            // che contengono il testo scritto dall'utente.
+            for (var i = 0; i < nomi.length; i++) {
+                // Convertiamo anche il nome in minuscolo per il confronto.
+                // indexOf() cerca una stringa dentro un'altra stringa.
+                // Se la trova, restituisce la posizione (0, 1, 2, ...).
+                // Se NON la trova, restituisce -1.
+                //
+                // Esempio: "marco".indexOf("ma") restituisce 0 (trovato all'inizio)
+                //          "marco".indexOf("xyz") restituisce -1 (non trovato)
+                var nomeMinuscolo = nomi[i].toLowerCase();
+
+                if (nomeMinuscolo.indexOf(testo) !== -1) {
+                    // Se il testo è contenuto nel nome, lo aggiungiamo ai risultati.
+                    risultati.push(nomi[i]);
+                }
+            }
+
+            // Ora mostriamo i risultati trovati come suggerimenti nella pagina.
+            // Cicliamo sull'array dei risultati.
+            for (var j = 0; j < risultati.length; j++) {
+
+                // Creiamo un elemento <div> per ogni suggerimento.
+                var divNome = document.createElement("div");
+
+                // Inseriamo il nome come testo del div.
+                divNome.textContent = risultati[j];
+
+                // Cambiamo il cursore per far capire all'utente
+                // che può cliccare sul suggerimento.
+                divNome.style.cursor = "pointer";
+
+                // Aggiungiamo un evento "click" al suggerimento.
+                // Quando l'utente clicca su un nome suggerito:
+                // 1) Il nome viene copiato nella barra di ricerca
+                // 2) I suggerimenti vengono nascosti
+                //
+                // Anche qui usiamo una funzione ausiliaria per "catturare"
+                // il valore del nome al momento della creazione dell'evento.
+                divNome.addEventListener("click", creaFunzioneSelezione(risultati[j]));
+
+                // Aggiungiamo il div del suggerimento al contenitore dei suggerimenti.
+                divSuggerimenti.appendChild(divNome);
+            }
+        }
+
+        // ============================================================
+        // FUNZIONE: creaFunzioneSelezione
+        // Questa funzione ausiliaria serve per "catturare" il valore
+        // del nome selezionato. Restituisce una funzione che, quando
+        // chiamata (al click), trasferisce il nome nella barra di ricerca
+        // e nasconde i suggerimenti.
+        // ============================================================
+        function creaFunzioneSelezione(nome) {
+            return function() {
+                // Inseriamo il nome cliccato nel campo di ricerca.
+                inputRicerca.value = nome;
+
+                // Svuotiamo il div dei suggerimenti per nasconderli.
+                divSuggerimenti.innerHTML = "";
+            };
+        }
+
+        // ============================================================
+        // EVENTI
+        // ============================================================
+
+        // L'evento "input" si attiva ogni volta che il contenuto del campo
+        // di testo cambia (ogni lettera digitata o cancellata).
+        // Questo è diverso da "keydown" perché si attiva DOPO che il testo
+        // è stato aggiornato, non prima.
+        inputRicerca.addEventListener("input", cercaSuggerimenti);
+    </script>
+
+</body>
+</html>

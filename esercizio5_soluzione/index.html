@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 5 - Appunti Rapidi (Sticky Notes)</title>
+    <style>
+        .appunto {
+            background-color: yellow;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            float: left;
+            cursor: pointer;
+            border: 1px solid brown;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        .container { display: flex; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+    <h1>I Miei Appunti</h1>
+
+    <textarea id="inputText" rows="4" cols="50" placeholder="Scrivi il tuo appunto qui..."></textarea><br>
+    <button id="btnSalva">Salva Appunto</button>
+
+    <div id="contenitoreAppunti" class="container"></div>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 5 - APPUNTI RAPIDI (STICKY NOTES)
+        // Obiettivo: Appunti testuali dinamici e memorizzazione su pc (localStorage)
+        // dell'avanzato dato testuale sotto forma di Array. (JSON conversion)
+        // ============================================================
+
+        // 1. RECUPERIAMO GLI ELEMENTI HTML
+        var inputText = document.getElementById("inputText");               // Il grande campo di testo <textarea>
+        var btnSalva = document.getElementById("btnSalva");                 // Il pulsante per salvare
+        var contenitoreAppunti = document.getElementById("contenitoreAppunti"); // Il div "padre" dove ci sbatacchiamo i fogliettini
+        
+        // Questo Array in Javascript ("note") fungerà da nostro cervello virtuale.
+        // Qui ci mettiamo gli appunti dentro.
+        var note = [];
+
+        // ============================================================
+        // FUNZIONE: caricaNote (alimento prima lettura memoria)
+        // ============================================================
+        function caricaNote() {
+            var stringaSalvata = localStorage.getItem("noteSalvate");
+            
+            // Se esiste già una scatola su pc
+            if (stringaSalvata !== null) {
+                // ATTENZIONE: Il localStorage non supporta salvare Arrays ["Primo","Secondo"] e capire che lo sono, 
+                // li convertiterebbe malamente in una stringa senza formato "Primo,Secondo".
+                // .JSON (JavaScript Object Notation) è un interprete.
+                // JSON.parse(testo) decodifica la stringa speciale memorizzata dal computer ridandoci il nostro Array nativo e sano!
+                note = JSON.parse(stringaSalvata);
+            }
+        }
+
+        // ============================================================
+        // FUNZIONE: salvaNote (aggiorno il localStorage)
+        // ============================================================
+        function salvaNote() {
+            // Analogamente a sopra, JSON.stringify(...) impacchetta e traveste 
+            // il nostro meraviglioso Array per poter essere incastrato 
+            // nella cruda e primitiva memoria string-like del LocalStorage.
+            localStorage.setItem("noteSalvate", JSON.stringify(note));
+        }
+
+        // ============================================================
+        // FUNZIONE: mostraNote
+        // Svuota "l'area da disegno" e per ogni nota presente in "note", appiccica un DIV in pagina.
+        // ============================================================
+        function mostraNote() {
+            // Svuotiamo il div gigantesco
+            contenitoreAppunti.innerHTML = "";
+
+            // Cicliamo array
+            for (var i = 0; i < note.length; i++) {
+                
+                // Creiamo l'elemento DIV che rappresenta il post-it giallino.
+                var divNota = document.createElement("div");
+                
+                // Diamo la classe "appunto" al div per agganciare il CSS impostato in cima! (.appunto)
+                divNota.className = "appunto";
+                
+                // Diamo il testo
+                divNota.textContent = note[i];
+
+                // Quando l'utente clicca una nota creata... deve eliminarsi!
+                // Passiamo la sua posizione ("i") alla funzione qui in basso.
+                divNota.addEventListener("click", creaFunzioneRimuoviNota(i));
+
+                // Montala nella bacheca!
+                contenitoreAppunti.appendChild(divNota);
+            }
+        }
+
+        // ============================================================
+        // FUNZIONE: creaFunzioneRimuoviNota (CLOSURE DI RIMUOVI)
+        // ============================================================
+        // Poichè i listener d'evento si creano nel ciclo FOR, 
+        // noi non possiamo usare direttamente un divNota.addEventListener("click", rimozione...).
+        // A causa della velocità di internet/compilazione, tutte avrebbero l'ultimo numero (es: 3).
+        // Restituendo una "function()" ingabbiamo momentaneamente e con precisione il numero corretto!
+        function creaFunzioneRimuoviNota(indice) {
+            return function() {
+                // Array.splice(posizionePartenza, QuantiElementiEliminare)
+                // Questa funzione va esattamente in "indice" e ne trancia via "1".
+                note.splice(indice, 1);
+                
+                // Dopo che abbiamo tagliato l'Array, ri-disegnamo e ri-salviamo tutto
+                mostraNote();
+                salvaNote();
+            };
+        }
+
+        // ============================================================
+        // AZIONE AL CLICK: Salva (creazione foglietto)
+        // ============================================================
+        btnSalva.addEventListener("click", function() {
+            var testoNota = inputText.value.trim();
+            
+            if (testoNota === "") {
+                // L'alert lancia un fischio (la classica finestra a comparsa errore)
+                alert("Non puoi salvare una nota vuota.");
+                return; // Ferma il proseguimento dello script (blocca l'azione)
+            }
+
+            // Aggiungiamo il contenuto alla fine dell'array
+            note.push(testoNota);
+            
+            // "Resettiamo" esteticamente il campo per esser pulito al giro dopo
+            inputText.value = "";
+            
+            // Ri-disegnamo e ri-salviamo
+            mostraNote();
+            salvaNote();
+        });
+
+        // ============================================================
+        // AVVIO SCRIPT AUTOMATICO
+        // ============================================================
+        caricaNote();
+        mostraNote();
+
+    </script>
+</body>
+</html>

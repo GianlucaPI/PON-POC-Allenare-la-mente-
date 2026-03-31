@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 3 - Contatore Persistente</title>
+</head>
+<body>
+    <h1>Contatore Persistente</h1>
+    <h2 id="displayContatore">0</h2>
+    
+    <button id="btnAumenta">Aumenta</button>
+    <button id="btnDiminuisci">Diminuisci</button>
+    <button id="btnResetta">Resetta</button>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 3 - CONTATORE PERSISTENTE
+        // Obiettivo: Creare un contatore che non perde il suo valore
+        // quando aggiorniamo la pagina, grazie a localStorage.
+        // ============================================================
+
+        // 1. RECUPERO DEGLI ELEMENTI DAL DOM (Dalla pagina web al mondo JavaScript)
+        // document.getElementById("nome-id") va a cercare nel nostro HTML un tag
+        // che ha esattamente quell'ID, e ce lo mette dentro una variabile.
+        var displayContatore = document.getElementById("displayContatore"); // L'elemento <h2> che mostra il numero
+        var btnAumenta = document.getElementById("btnAumenta");             // Il pulsante "+"
+        var btnDiminuisci = document.getElementById("btnDiminuisci");       // Il pulsante "-"
+        var btnResetta = document.getElementById("btnResetta");             // Il pulsante di azzeramento
+
+        // Questa è la variabile che contiene realmente il numero (in memoria).
+        // Parte da zero di default, ma potremmo cambiarla se nel localStorage troviamo qualcosa.
+        var contatore = 0;
+
+        // ============================================================
+        // FUNZIONE: caricaContatore
+        // Ha il compito di andare a leggere se nel pc in cui stiamo, è 
+        // stato salvato in precedenza il numero del contatore.
+        // ============================================================
+        function caricaContatore() {
+            // localStorage.getItem("nome-chiave") va a cercare nel piccolo database del browser
+            // se c'è un'informazione salvata col nome "contatore".
+            var datoSalvato = localStorage.getItem("contatore");
+
+            // Se troviamo un datoSalvato (quindi non è nullo), procediamo a usarlo
+            if (datoSalvato !== null) {
+                // ATTENZIONE: Il localStorage salva tutto come "Testo" (Stringhe).
+                // "10" come testo non è la stessa cosa di 10 come numero (matematicamente non potresti sommargli 1).
+                // parseInt(stringa, 10) prende il testo "10" e lo converte nel vero numero 10.
+                // Il ", 10" specifica che usiamo il sistema decimale (i normali numeri).
+                contatore = parseInt(datoSalvato, 10);
+            }
+
+            // Dopo aver recuperato il dato dal pc (o aver lasciato a 0),
+            // dobbiamo "stamparlo" sullo schermo, quindi chiamiamo la funzione preposta.
+            aggiornaDisplay();
+        }
+
+        // ============================================================
+        // FUNZIONE: salvaContatore
+        // Ha il compito di aggiornare il salvataggio nel database locale.
+        // ============================================================
+        function salvaContatore() {
+            // localStorage.setItem("nome-chiave", valore) salva un'informazione.
+            // Sostituisce eventuali valori vecchi.
+            localStorage.setItem("contatore", contatore);
+        }
+
+        // ============================================================
+        // FUNZIONE: aggiornaDisplay
+        // Ha il compito di prendere la nostra variabile in memoria "contatore"
+        // e farla apparire nell'HTML affinché l'utente la veda.
+        // ============================================================
+        function aggiornaDisplay() {
+            // textContent modifica il testo che un elemento HTML ha dentro di sé.
+            // Nel nostro caso modifica quello che si trova in <h2>...</h2>
+            displayContatore.textContent = contatore;
+        }
+
+        // ============================================================
+        // GESTIONE DEGLI EVENTI
+        // Qui diciamo cosa deve succedere DOPO che l'utente compie un'azione (il click).
+        // ============================================================
+
+        // Aggiungiamo un "ascoltatore" di eventi sul bottone btnAumenta, ascolta il "click".
+        btnAumenta.addEventListener("click", function() {
+            contatore++; // É come scrivere: contatore = contatore + 1
+            aggiornaDisplay(); // Stampiamo il nuovo valore a schermo
+            salvaContatore();  // Salviamo in memoria
+        });
+
+        // Ascoltatore per il bottone btnDiminuisci
+        btnDiminuisci.addEventListener("click", function() {
+            contatore--; // É come scrivere: contatore = contatore - 1
+            aggiornaDisplay();
+            salvaContatore();
+        });
+
+        // Ascoltatore per il bottone btnResetta
+        btnResetta.addEventListener("click", function() {
+            contatore = 0; // Rimettiamo a 0 manualmente
+            aggiornaDisplay();
+            salvaContatore();
+        });
+
+        // ============================================================
+        // AVVIO DELLO SCRIPT
+        // ============================================================
+        // Quando la pagina web finisce di caricare e incontra l'elemento <script>,
+        // legge ed esegue subito tutto il codice dentro. Chiamando questa funzione,
+        // avviamo la procedura per dire alla pagina "Ehi, guarda se avevi salvato qualcosa!".
+        caricaContatore();
+
+    </script>
+</body>
+</html>

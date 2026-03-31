@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM Playground - JavaScript Base</title>
+</head>
+<body>
+  <h1 id="titolo">DOM Playground</h1>
+
+  <p class="descrizione">Questa pagina serve per esercitarsi con JavaScript e i tag HTML.</p>
+  <p class="descrizione">Usa i file 04, 05, 06 e 07 in ordine.</p>
+
+  <section>
+    <h2>Lista corsi</h2>
+    <ul id="lista-corsi">
+      <li class="corso">HTML</li>
+      <li class="corso">CSS</li>
+      <li class="corso">JavaScript</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Interazioni</h2>
+    <button id="btnSaluta">Saluta</button>
+    <button id="btnColore">Cambia colore titolo</button>
+    <button id="btnAggiungi">Aggiungi elemento</button>
+  </section>
+
+  <section>
+    <h2>Messaggi</h2>
+    <div id="boxMessaggio">Messaggio iniziale</div>
+    <input id="inputNome" type="text" placeholder="Scrivi il tuo nome">
+  </section>
+
+  <section>
+    <h2>Lista dinamica</h2>
+    <ul id="listaDinamica"></ul>
+  </section>
+
+  <section>
+    <h2>Form esempio</h2>
+    <form id="formContatto">
+      <label for="email">Email:</label>
+      <input id="email" type="email" placeholder="nome@email.it">
+      <button type="submit">Invia</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Input type playground</h2>
+    <form id="formInputTypes">
+      <div>
+        <label for="inputText">Testo:</label>
+        <input id="inputText" type="text" placeholder="Scrivi un testo">
+      </div>
+
+      <div>
+        <label for="inputNumber">Numero:</label>
+        <input id="inputNumber" type="number" min="0" max="100" value="18">
+      </div>
+
+      <div>
+        <label for="inputDate">Data:</label>
+        <input id="inputDate" type="date">
+      </div>
+
+      <div>
+        <label>
+          <input id="inputCheckbox" type="checkbox">
+          Accetto le condizioni
+        </label>
+      </div>
+
+      <fieldset>
+        <legend>Livello</legend>
+        <label>
+          <input type="radio" name="livello" value="base" checked>
+          Base
+        </label>
+        <label>
+          <input type="radio" name="livello" value="intermedio">
+          Intermedio
+        </label>
+        <label>
+          <input type="radio" name="livello" value="avanzato">
+          Avanzato
+        </label>
+      </fieldset>
+
+      <div>
+        <label for="inputRange">Range (0-10):</label>
+        <input id="inputRange" type="range" min="0" max="10" value="5">
+      </div>
+
+      <div>
+        <label for="inputColor">Colore:</label>
+        <input id="inputColor" type="color" value="#3366ff">
+      </div>
+
+      <button type="button" id="btnLeggiInput">Leggi valori input</button>
+    </form>
+  </section>
+
+  <!--
+    Carica UNO script alla volta per seguire la progressione didattica.
+    Togli il commento alla riga che vuoi provare.
+  -->
+
+  <!-- <script src="./04_dom_selezione_base.js"></script> -->
+  <!-- <script src="./05_dom_modifica_tag.js"></script> -->
+  <!-- <script src="./06_dom_eventi_base.js"></script> -->
+  <!-- <script src="./07_dom_creazione_elementi.js"></script> -->
+  <!-- <script src="./08_dom_input_types.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 4 - Filtro Lista Prodotti in Tempo Reale</title>
+</head>
+<body>
+    <h1>Cerca tra i Prodotti Disponibili</h1>
+    
+    <input type="text" id="inputFiltro" placeholder="Cerca prodotto...">
+    <ul id="listaProdotti"></ul>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 4 - FILTRO LISTA (Ricerca in Tempo Reale)
+        // Obiettivo: Avere una lista di elementi (es. frutta) e una barra.
+        // Scrivendo, la lista mostra *solo* i risultati corrispondenti.
+        // ============================================================
+
+        // 1. RECUPERO RIFERIMENTI
+        // inputFiltro: La barra di testo dove l'utente andrà a digitare la ricerca
+        var inputFiltro = document.getElementById("inputFiltro");
+        // ulLista: La lista (attualmente vuota ma presente nel HTML) che ospiterà i prodotti
+        var ulLista = document.getElementById("listaProdotti");
+
+        // 2. I NOSTRI DATI (L'Array originale)
+        // Un "Array" (o vettore) in JavaScript è una scatola che può contenere più oggetti.
+        // Questo è il nostro "database" statico.
+        var prodotti = [
+            "Mela", "Banana", "Arancia",
+            "Pera", "Mango", "Papaya",
+            "Ananas", "Fragola", "Ciliegia"
+        ];
+
+        // ============================================================
+        // FUNZIONE: mostraProdotti(listaDaMostrare)
+        // Questa funzione prende un array in ingresso (che chiamiamo 'listaDaMostrare')
+        // e lo trasforma in elementi <li> dentro il tag <ul> nell'HTML.
+        // ============================================================
+        function mostraProdotti(listaDaMostrare) {
+            // Passo 1: Svuotiamo la lista per rimuovere i vecchi risultati mostrati prima
+            // Se non lo facessimo, i nuovi sarebbero semplicemente aggiunti sotto a quelli vecchi!
+            ulLista.innerHTML = "";
+
+            // Passo 2: Creiamo gli elementi tramite un ciclo "for".
+            // Il ciclo andrà da 0 fino alla quantità di elementi dell'array (listaDaMostrare.length).
+            for (var i = 0; i < listaDaMostrare.length; i++) {
+                
+                // document.createElement("li") dice al browser: "Tienimi in memoria un tag <li> nuovo di zecca".
+                var li = document.createElement("li");
+                
+                // In questo nuovo tag inseriamo come testo il nome del prodotto corrente (indice 'i').
+                li.textContent = listaDaMostrare[i];
+                
+                // Infine "appendiamo" (attacchiamo) il tag formato, dentro il tag genitore <ul>.
+                ulLista.appendChild(li);
+            }
+        }
+
+        // ============================================================
+        // EVENTO: input sul campo di ricerca
+        // L'evento "input" viene innescato ogni volta che cambia il testo 
+        // nel tag (che premi un tasto, che fai cancella, che incolli col mouse).
+        // ============================================================
+        inputFiltro.addEventListener("input", function() {
+            // Prendiamo il valore attuale della casella di ricerca
+            // toLowerCase() = fa diventar tutto minuscolo (così se l'utente digita MAYUSC o minuscolo è lo stesso)
+            // trim() = toglie gli spazi vuoti che per sbaglio l'utente mettesse all'inizio e alla fine
+            var testoFiltro = inputFiltro.value.toLowerCase().trim();
+            
+            // Creiamo un contenitore dove salveremo i "vincitori", cioè chi supera il filtro
+            var risultatiFiltrati = [];
+
+            // Cicliamo sull'array *originale* dei prodotti (tutti quanti).
+            for (var i = 0; i < prodotti.length; i++) {
+                // Trasformiamo anche il prodotto corrente tutto in minuscolo
+                var nomeProdottoMinuscolo = prodotti[i].toLowerCase();
+                
+                // .indexOf(testo) cerca 'testo' dentro 'nomeProdottoMinuscolo'.
+                // Se c'è, restituisce la posizione in cui inizia la parola es: (0, 1, 2...).
+                // Se la parola NON E' PRESENTE, JavaScript restituisce -1.
+                // Quindi diciamo: "Se l'esito della ricerca è un qualsiasi numero diverso da -1..."
+                if (nomeProdottoMinuscolo.indexOf(testoFiltro) !== -1) {
+                    // ... Il prodotto va inserito nella scatola dei vincitori! 
+                    // .push() aggunge l'elemento nell'array risultatiFiltrati.
+                    risultatiFiltrati.push(prodotti[i]);
+                }
+            }
+
+            // A ciclo terminato, la nostra nuova scatola "risultatiFiltrati"
+            // è pronta per essere spedita alla funzione "mostraProdotti()", che la visualizzerà in pagina.
+            mostraProdotti(risultatiFiltrati);
+        });
+
+        // ============================================================
+        // AVVIO INIZIALE
+        // Quando ricarichiamo la pagina per la prima volta l'input è vuoto.
+        // Mostriamo a schermo direttamente la cassa "prodotti" senza filtrarla.
+        // ============================================================
+        mostraProdotti(prodotti);
+    </script>
+</body>
+</html>

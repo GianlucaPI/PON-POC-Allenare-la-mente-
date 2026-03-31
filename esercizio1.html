@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 1 - TODO List</title>
+</head>
+<body>
+
+    <h1>La mia TODO List</h1>
+
+    <!-- Campo di input dove l'utente scrive il nuovo task -->
+    <input type="text" id="inputTask" placeholder="Scrivi un nuovo task...">
+
+    <!-- Bottone per aggiungere il task alla lista -->
+    <button id="btnAggiungi">Aggiungi</button>
+
+    <!-- Lista non ordinata dove verranno mostrati i task -->
+    <ul id="listaTask"></ul>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 1 - TODO LIST CON LOCALSTORAGE
+        // ============================================================
+
+        // Recuperiamo i riferimenti agli elementi HTML che ci servono.
+        // document.getElementById() ci permette di "prendere" un elemento
+        // dalla pagina usando il suo attributo id.
+        var inputTask = document.getElementById("inputTask");
+        var btnAggiungi = document.getElementById("btnAggiungi");
+        var listaTask = document.getElementById("listaTask");
+
+        // Questo array conterrà tutti i nostri task.
+        // All'inizio è vuoto, ma verrà riempito dal localStorage (se ci sono dati salvati).
+        var tasks = [];
+
+        // ============================================================
+        // FUNZIONE: caricaTaskDaLocalStorage
+        // Questa funzione controlla se nel localStorage del browser
+        // ci sono dei task salvati in precedenza. Se sì, li carica.
+        // ============================================================
+        function caricaTaskDaLocalStorage() {
+            // localStorage.getItem("tasks") restituisce una stringa
+            // con i dati salvati, oppure null se non c'è nulla.
+            var datiSalvati = localStorage.getItem("tasks");
+
+            // Controlliamo se esistono dati salvati
+            if (datiSalvati !== null) {
+                // JSON.parse() trasforma una stringa JSON in un array JavaScript.
+                // Esempio: la stringa '["Fare la spesa","Studiare"]'
+                // diventa l'array ["Fare la spesa", "Studiare"]
+                tasks = JSON.parse(datiSalvati);
+            }
+        }
+
+        // ============================================================
+        // FUNZIONE: salvaTaskNelLocalStorage
+        // Questa funzione salva l'array dei task nel localStorage
+        // del browser, così non si perdono quando chiudiamo la pagina.
+        // ============================================================
+        function salvaTaskNelLocalStorage() {
+            // JSON.stringify() trasforma un array JavaScript in una stringa JSON.
+            // Esempio: l'array ["Fare la spesa", "Studiare"]
+            // diventa la stringa '["Fare la spesa","Studiare"]'
+            // localStorage può salvare SOLO stringhe, per questo usiamo JSON.stringify.
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        // ============================================================
+        // FUNZIONE: mostraTask
+        // Questa funzione si occupa di mostrare tutti i task nella pagina.
+        // Ogni volta che viene chiamata, svuota la lista e la ricrea da zero.
+        // ============================================================
+        function mostraTask() {
+            // Svuotiamo completamente la lista HTML.
+            // innerHTML = "" rimuove tutto il contenuto interno dell'elemento.
+            listaTask.innerHTML = "";
+
+            // Cicliamo su tutti i task presenti nell'array.
+            // Il ciclo for scorre l'array dall'indice 0 fino all'ultimo elemento.
+            for (var i = 0; i < tasks.length; i++) {
+
+                // Creiamo un nuovo elemento <li> (list item) per ogni task.
+                // document.createElement("li") crea un elemento HTML in memoria.
+                var li = document.createElement("li");
+
+                // Inseriamo il testo del task dentro l'elemento <li>.
+                // textContent imposta il testo visibile dell'elemento.
+                li.textContent = tasks[i];
+
+                // Cambiamo il cursore del mouse quando si passa sopra il task,
+                // così l'utente capisce che può cliccarci sopra.
+                li.style.cursor = "pointer";
+
+                // Aggiungiamo un evento "click" all'elemento <li>.
+                // Quando l'utente clicca sul task, verrà chiamata la funzione
+                // che lo rimuove dalla lista.
+                //
+                // ATTENZIONE: usiamo una "closure" (funzione che racchiude una variabile).
+                // Questo è necessario perché dentro il ciclo for la variabile "i" cambia.
+                // Se non usassimo questa tecnica, tutti i click farebbero riferimento
+                // all'ultimo valore di "i", e non funzionerebbe correttamente.
+                li.addEventListener("click", creaFunzioneRimozione(i));
+
+                // Aggiungiamo l'elemento <li> alla lista <ul> nella pagina.
+                // appendChild() inserisce un elemento figlio dentro un elemento padre.
+                listaTask.appendChild(li);
+            }
+        }
+
+        // ============================================================
+        // FUNZIONE: creaFunzioneRimozione
+        // Questa funzione ausiliaria serve per "catturare" il valore
+        // dell'indice al momento della creazione dell'evento click.
+        // Restituisce una funzione che, quando chiamata, rimuove
+        // il task corrispondente a quell'indice.
+        // ============================================================
+        function creaFunzioneRimozione(indice) {
+            // Restituiamo una funzione che eseguirà la rimozione
+            return function() {
+                rimuoviTask(indice);
+            };
+        }
+
+        // ============================================================
+        // FUNZIONE: aggiungiTask
+        // Questa funzione aggiunge un nuovo task alla lista.
+        // ============================================================
+        function aggiungiTask() {
+            // Recuperiamo il testo scritto dall'utente nel campo di input.
+            // .value contiene il testo attuale dell'input.
+            // .trim() rimuove gli spazi vuoti all'inizio e alla fine della stringa.
+            var testo = inputTask.value.trim();
+
+            // Controlliamo che il testo non sia vuoto.
+            // Se l'utente non ha scritto nulla, non aggiungiamo il task.
+            if (testo === "") {
+                alert("Scrivi qualcosa prima di aggiungere un task!");
+                return; // usciamo dalla funzione senza fare nulla
+            }
+
+            // Aggiungiamo il testo del nuovo task in fondo all'array.
+            // push() aggiunge un elemento alla fine dell'array.
+            tasks.push(testo);
+
+            // Svuotiamo il campo di input dopo aver aggiunto il task.
+            inputTask.value = "";
+
+            // Salviamo i task aggiornati nel localStorage.
+            salvaTaskNelLocalStorage();
+
+            // Aggiorniamo la visualizzazione della lista nella pagina.
+            mostraTask();
+        }
+
+        // ============================================================
+        // FUNZIONE: rimuoviTask
+        // Questa funzione rimuove un task dalla lista quando viene cliccato.
+        // Il parametro "indice" indica quale task rimuovere.
+        // ============================================================
+        function rimuoviTask(indice) {
+            // splice() rimuove elementi da un array.
+            // Il primo parametro è la posizione da cui iniziare a rimuovere.
+            // Il secondo parametro è quanti elementi rimuovere (1 in questo caso).
+            tasks.splice(indice, 1);
+
+            // Salviamo i task aggiornati nel localStorage.
+            salvaTaskNelLocalStorage();
+
+            // Aggiorniamo la visualizzazione della lista nella pagina.
+            mostraTask();
+        }
+
+        // ============================================================
+        // EVENTI
+        // ============================================================
+
+        // Quando l'utente clicca sul bottone "Aggiungi", chiamiamo la funzione aggiungiTask.
+        btnAggiungi.addEventListener("click", aggiungiTask);
+
+        // Quando l'utente preme il tasto "Invio" nel campo di input,
+        // chiamiamo la funzione aggiungiTask (più comodo per l'utente).
+        inputTask.addEventListener("keydown", function(evento) {
+            // evento.key contiene il nome del tasto premuto.
+            // Controlliamo se il tasto premuto è "Enter" (Invio).
+            if (evento.key === "Enter") {
+                aggiungiTask();
+            }
+        });
+
+        // ============================================================
+        // AVVIO DELL'APPLICAZIONE
+        // ============================================================
+
+        // Quando la pagina si apre, carichiamo i task salvati nel localStorage
+        // e li mostriamo nella pagina.
+        caricaTaskDaLocalStorage();
+        mostraTask();
+    </script>
+
+</body>
+</html>

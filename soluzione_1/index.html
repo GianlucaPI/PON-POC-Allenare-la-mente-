@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1> La mia TODO List </h1>
+
+    <input type="text" id="inputTask" placeholder="Nuovo task...">
+    <button id="btnAggiungi"> Aggiungi </button>
+
+    <ul id="listaTask">
+        <li> Ciao Gianluca </li>
+    </ul>
+
+    <script>
+        // posso scrivere del codice JavaScript
+
+        // 1) i tag HTML devono avere un id, altrimenti JavaScript
+        // non puo' interagirci
+        // N.B. gli id devono essere UNIVOCI
+
+        var inputTask = document.getElementById("inputTask");
+        var btnAggiungi = document.getElementById("btnAggiungi");
+
+        var listaTask = document.getElementById("listaTask");
+        
+        // creo la task
+        var tasks = []; // array di tasks, popolato da cio' che scrivo nell'input
+
+        function caricaTaskDaLocalStorage(){
+
+            // 1) carico i dati 
+            var datiSalvati = localStorage.getItem("tasks");
+
+            if (datiSalvati !== null){
+                tasks = JSON.parse(datiSalvati);
+            }
+
+        }
+
+        // tasks -> trasformarlo in una stringa -> salviamo nel localstorage
+        function salvaTaskNelLocalStorage(){
+
+            // trasforma un array in una stringa
+            var taskString = JSON.stringify(tasks);
+            // javascript object notation
+
+            localStorage.setItem("tasks", taskString);
+        }
+
+        // funzione che aggiorna la lista mostrando le varie tasks
+        function mostraTask(){
+            // mostra il contenuto dell'array tasks
+            // sottoforma di tag html
+            // altrimenti l'utente non vede
+            // JavaScript deve CREARE altri tag
+
+            listaTask.innerHTML = ""; // rimuove il contenuto -> svuota
+
+            // per ogni task dentro tasks, creo un task e lo visualizzo
+            for(var i = 0; i < tasks.length; i++ ){
+
+                // per ogni task, creo un tag visibile all'utente
+                // creo un <li>
+                var li = document.createElement("li");
+                
+                // aggiorna il contenuto di li
+                li.textContent = tasks[i];
+                li.style.cursor = "pointer";
+                
+                li.addEventListener("click", creaFunzioneRimozione(i));
+                
+                // aggiungo li alla lista
+                listaTask.appendChild(li);
+            }
+        }
+
+        // Funzione ausiliaria che serve per catturare il valore (l'indice)
+        function creaFunzioneRimozione(indice){
+            return function(){
+                rimuoviTask(indice);
+            }
+        }
+
+        // rimuove un task dalla lista -> che si trova in posizione 'indice'
+        function rimuoviTask(indice){
+            // splice() rimuove gli elementi di un array
+            // il primo parametro la posizione da dove eliminare
+            // il secondo parametro quanti elementi rimuovere
+            tasks.splice(indice, 1);
+
+            salvaTaskNelLocalStorage();
+            mostraTask();
+        }
+
+        // recuperare i dati dall'input text
+        // funzione che prende i dati dall'input e aggiunge all'array di tasks
+        function aggiungiTask(){
+            var testo = inputTask.value.trim(); // trim() toglie spazi all'inizio e alla fine -> OPZIONALE
+            tasks.push(testo); // pusho il testo nelle tasks
+
+            salvaTaskNelLocalStorage();
+            mostraTask();
+        }
+
+        // la funzione aggiungiTask() deve essere chiamata quando 
+        // premo il pulsante 'btnAggiungi'
+        // function callback -> variabile che chiama una funzione
+        btnAggiungi.addEventListener("click", aggiungiTask);
+
+        caricaTaskDaLocalStorage();
+        mostraTask();
+
+    </script>
+</body>
+</html> 

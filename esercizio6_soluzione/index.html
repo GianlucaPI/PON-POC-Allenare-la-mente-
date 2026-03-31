@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esercizio 6 - Rubrica Contatti</title>
+    <style>
+        .contatto { border-bottom: 1px dotted #ccc; padding: 10px; display: flex; justify-content: space-between; }
+        .btnX { color: red; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>La Mia Rubrica</h1>
+
+    <div style="margin-bottom: 20px;">
+        <input type="text" id="inputNome" placeholder="Nome contatto">
+        <input type="text" id="inputTel" placeholder="Numero di telefono">
+        <button id="btnAggiungi">Aggiungi</button>
+    </div>
+
+    <!-- Lista non ordinata che mostrerà i contatti -->
+    <ul id="listaContatti"></ul>
+
+    <script>
+        // ============================================================
+        // ESERCIZIO 6 - RUBRICA CONTATTI (Dati Strutturati - Object)
+        // Obiettivo: Mostra il salvataggio avanzato creando all'interno
+        // dell'Array non più semplice testo, ma interi "Oggetti" Javascript!
+        // ============================================================
+
+        var inputNome = document.getElementById("inputNome");
+        var inputTel = document.getElementById("inputTel");
+        var btnAggiungi = document.getElementById("btnAggiungi");
+        var listaContatti = document.getElementById("listaContatti");
+
+        // Il nostro amato array madre.
+        // Qui, invece di apparire così: ["Mario", "Luigi"] ...
+        // Appariranno oggetti complessi: [ {nome: "Mario", telefono: "123"}, {nome: "Luigi", telefono: "456"} ]
+        var contatti = [];
+
+        // ============================================================
+        // LETTURA ED ESTRAZIONE
+        // ============================================================
+        function caricaDaLocalStorage() {
+            var stringaContatti = localStorage.getItem("contattiRubrica");
+            if (stringaContatti !== null) {
+                // Il potente JSON parser non ha problemi a scompattare anche queste
+                // strutture complesse chiamate JSON/Oggetti (Parentesi graffe in js!).
+                contatti = JSON.parse(stringaContatti);
+            }
+        }
+
+        function salvaInLocalStorage() {
+            // Analogamente, impacchetta fedelmente questa struttura profonda.
+            localStorage.setItem("contattiRubrica", JSON.stringify(contatti));
+        }
+
+        // ============================================================
+        // CREAZIONE DEGLI ELEMENTI HTML
+        // ============================================================
+        function mostraRubrica() {
+            // 1. Facciamo piazza pulita dell'HTML
+            listaContatti.innerHTML = "";
+
+            // 2. Analizziamo e stampiamo uno a uno, per tutto l'array
+            for (var i = 0; i < contatti.length; i++) {
+                
+                // Creiamo il tag genitore della singola "Riga Rubrica"
+                var li = document.createElement("li");
+                li.className = "contatto"; // Stile css con .contatto
+
+                // ==========================
+                // IL CONTENUTO
+                // ==========================
+                // Creiamo un tag <DIV> che metteremo *dentro* al <LI>. Ognuno sarà autonomo.
+                var divDati = document.createElement("div");
+                
+                // ATTENZIONE: per entrare in un "Oggetto" si usa il "Punto".
+                // contatti[i] rappresenta l'intero contatto n. "i".
+                // .nome ci fa estrarre unicamente "Mario Rossi" dal guscio.
+                // Usiamo il segno "+" per incollare la stringa col tratttino " - "
+                divDati.textContent = contatti[i].nome + " - " + contatti[i].telefono;
+
+                // ==========================
+                // LA "X" PER ELIMINARE
+                // ==========================
+                // Creiamo un pezzettino <span>... dedicato interamente al ruolo di bottone!
+                var spanElimina = document.createElement("span");
+                spanElimina.className = "btnX";           // Ha la scritta rossa curata dal CSS nel <head>
+                spanElimina.textContent = " [X]";         // Testo estetico per noi
+                
+                // Appiccichiamogli l'ascoltatore come al solito usando la chiousure pre-creata.
+                spanElimina.addEventListener("click", creaFunzioneRimuoviContatto(i));
+
+                // ==========================
+                // ASSEMBLAGGIO (Matrioska HTML)
+                // ==========================
+                // Diciamo ad LI: "Aggiungi al tuo interno l'elemento DIV (Il nome) e metti la X di fianco"
+                li.appendChild(divDati);
+                li.appendChild(spanElimina);
+
+                // Diciamo infine ad UL: "Aggiungi questo LI ciccione per vederlo a tutta pagina"
+                listaContatti.appendChild(li);
+            }
+        }
+
+        // ====> Funzione che intrappola la lettera "i" per l'eliminazione pulita
+        function creaFunzioneRimuoviContatto(indice) {
+            return function() {
+                // Sceso in campo, l'Array perde per sempre un pezzo col .splice !
+                contatti.splice(indice, 1);
+                mostraRubrica();
+                salvaInLocalStorage();
+            };
+        }
+
+        // ============================================================
+        // L'EVENTO DELLA CREAZIONE
+        // Qui uniamo i due campi in un solo blocco.
+        // ============================================================
+        btnAggiungi.addEventListener("click", function() {
+            var nomeVal = inputNome.value.trim();
+            var telVal = inputTel.value.trim();
+
+            if (nomeVal === "" || telVal === "") {
+                alert("Inserisci sia il nome che il numero!");
+                return; // Fermati... Non procedere... Non si crea fuffa!
+            }
+
+            // ECCO IL TRUCCO JS DEGLI "OBJECT": 
+            // Invece di salvare push(nomeVal), apriamo una scatolina con le parentesi graffe "{}" 
+            // per legare un pacchetto inseparabile con NOME + TELEFONO allineati. Così rimarranno amici.
+            // La chiamano "Sintassi Chiave/Valore". L'etichetta prima dei due punti, il contenuto a destra.
+            contatti.push({
+                nome: nomeVal,
+                telefono: telVal
+            });
+
+            // "Diamo lo straccio" (Puliamo la barra in modo appaia vuota!)
+            inputNome.value = "";
+            inputTel.value = "";
+
+            // Aggiorniamo! Boom!
+            mostraRubrica();
+            salvaInLocalStorage();
+        });
+
+        // ============================================================
+        // LE FONDAMENTA DELLO SCRIPT (Avvio)
+        // ============================================================
+        caricaDaLocalStorage();
+        mostraRubrica();
+
+    </script>
+</body>
+</html>
