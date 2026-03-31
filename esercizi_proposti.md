@@ -1,6 +1,17 @@
 # Esercizi Proposti
 
-Sulla base dei concetti visti in `esercizio1.html` (TODO List con LocalStorage) e `esercizio2.html` (Barra di Ricerca con Autocompletamento), ecco 4 nuovi esercizi per fare pratica con la manipolazione del DOM, gli eventi, gli array e il LocalStorage.
+Ecco una serie di esercizi per fare pratica con la manipolazione del DOM, gli eventi, gli array e il LocalStorage.
+
+## Esercizio 1: TODO List
+Creare una semplice TODO list per la gestione delle cose da fare in una giornata. 
+Inserendo un nuovo task si deve accodare agli altri già presenti e cliccandoci sopra deve essere rimosso in quanto considerato completato.
+I task devono essere salvati nel localStorage del browser e ricaricati se presenti all’apertura della pagina.
+
+## Esercizio 2: Autocompletamento barra di ricerca
+Create una rudimentale barra di ricerca implementando la funzione di autocompletamento. 
+In pratica mentre scrivete nel campo il sistema deve suggerirvi sotto dei nomi presi da un array.
+Cliccando sui nomi suggeriti il valore deve essere trasferito sulla barra di ricerca ed i nomi consigliati nascosti.
+Se il risultato è corretto, ogni soluzione è valida.
 
 ## Esercizio 3: Contatore Persistente
 **Obiettivo:** Creare un contatore numerico con tre pulsanti: "Aumenta", "Diminuisci" e "Resetta". Il valore del contatore deve essere salvato nel `localStorage` in modo che ricaricando la pagina il numero non si azzeri.
